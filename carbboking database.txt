@@ -1,0 +1,84 @@
+-- Create database
+CREATE DATABASE car_booking_system_db;
+
+-- Use the database
+USE car_booking_system_db;
+
+CREATE TABLE Admin (
+    driver_id INT AUTO_INCREMENT PRIMARY KEY,
+    driver_name VARCHAR(255) NOT NULL,
+    Add_car BOOLEAN NOT NULL,
+    driver_address VARCHAR(255) NOT NULL,
+    driver_number VARCHAR(255) UNIQUE NOT NULL,
+    car_brand VARCHAR(100) NOT NULL,
+    INDEX(driver_name),
+    INDEX(driver_number),
+    INDEX(car_brand)
+);
+
+CREATE TABLE Cab (
+    cab_id INT AUTO_INCREMENT PRIMARY KEY,
+    driver_id INT UNIQUE NOT NULL,
+    driver_name VARCHAR(255) NOT NULL,
+    driver_number VARCHAR(255) UNIQUE NOT NULL,
+    car_brand VARCHAR(100) NOT NULL,
+    FOREIGN KEY (driver_id) REFERENCES Admin(driver_id),
+    FOREIGN KEY (driver_name) REFERENCES Admin(driver_name),
+    FOREIGN KEY (driver_number) REFERENCES Admin(driver_number),
+    FOREIGN KEY (car_brand) REFERENCES Admin(car_brand)
+);
+
+
+
+
+-- Create Customer Signup table
+CREATE TABLE customer_signup (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255),
+    username VARCHAR(255),
+    email VARCHAR(255),
+    number VARCHAR(255),
+    gender VARCHAR(255),
+    address VARCHAR(255),
+    password VARCHAR(255),
+    re_password VARCHAR(255)
+);
+
+-- Create Customer Login table
+CREATE TABLE customer_login (
+    customer_id INT,
+    username VARCHAR(255),
+    password VARCHAR(255),
+    FOREIGN KEY (customer_id) REFERENCES customer_signup(customer_id)
+    
+);
+
+-- Create Forgot Password table
+CREATE TABLE forgot_password (
+    forgot_id INT AUTO_INCREMENT PRIMARY KEY,
+    changepassword VARCHAR(255)
+);
+
+-- Create Car Booking table
+CREATE TABLE Car_Booking (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    cab_id INT,
+    Name VARCHAR(255) UNIQUE NOT NULL,
+    Date DATE NOT NULL,
+    mobile VARCHAR(255) UNIQUE NOT NULL,
+    car_booking BOOLEAN NOT NULL,
+    select_car BOOLEAN NOT NULL,
+    pickup_point VARCHAR(255) NOT NULL,
+    drop_point VARCHAR(255) NOT NULL,
+    price DOUBLE NOT NULL,
+    reaching_status DOUBLE,
+    FOREIGN KEY (customer_id) REFERENCES customer_signup(customer_id),
+    FOREIGN KEY (cab_id) REFERENCES Cab(cab_id)
+);
+
+
+=======================================================================================================================================================
+
+
+
