@@ -1,10 +1,10 @@
 -- Sample data for LoginTable
-INSERT INTO LoginTable (password, email, role) VALUES
-('admin123', 'admin@example.com', 'admin'),
-('owner123', 'owner1@example.com', 'car_owner'),
-('owner456', 'owner2@example.com', 'car_owner'),
-('customer123', 'customer1@example.com', 'customer'),
-('customer456', 'customer2@example.com', 'customer');
+INSERT INTO LoginTable (username, password, email, role) VALUES
+('admin1', 'admin123', 'admin@example.com', 'admin'),
+('owner12', 'owner123', 'owner1@example.com', 'car_owner'),
+('owner45', 'owner456', 'owner2@example.com', 'car_owner'),
+('customer12', 'customer123', 'customer1@example.com', 'customer'),
+('customer45', 'customer456', 'customer2@example.com', 'customer');
 
 -- Sample data for Customer
 INSERT INTO Customer (first_name, last_name, email, address, login_id, phone_number) VALUES
