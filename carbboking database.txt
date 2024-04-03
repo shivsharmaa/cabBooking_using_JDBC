@@ -1,84 +1,120 @@
--- Create database
-CREATE DATABASE car_booking_system_db;
+-- Sample data for LoginTable
+INSERT INTO LoginTable (password, email, role) VALUES
+('admin123', 'admin@example.com', 'admin'),
+('owner123', 'owner1@example.com', 'car_owner'),
+('owner456', 'owner2@example.com', 'car_owner'),
+('customer123', 'customer1@example.com', 'customer'),
+('customer456', 'customer2@example.com', 'customer');
 
--- Use the database
-USE car_booking_system_db;
+-- Sample data for Customer
+INSERT INTO Customer (first_name, last_name, email, address, login_id, phone_number) VALUES
+('John', 'Doe', 'john.doe@example.com', '123 Main St, Anytown, USA', 4, '123-456-7890'),
+('Jane', 'Smith', 'jane.smith@example.com', '456 Oak St, Anytown, USA', 5, '987-654-3210');
 
-CREATE TABLE Admin (
-    driver_id INT AUTO_INCREMENT PRIMARY KEY,
-    driver_name VARCHAR(255) NOT NULL,
-    Add_car BOOLEAN NOT NULL,
-    driver_address VARCHAR(255) NOT NULL,
-    driver_number VARCHAR(255) UNIQUE NOT NULL,
-    car_brand VARCHAR(100) NOT NULL,
-    INDEX(driver_name),
-    INDEX(driver_number),
-    INDEX(car_brand)
+-- Sample data for CarOwner
+INSERT INTO CarOwner (name, address, email, phone) VALUES
+('Car Owner 1', '789 Elm St, Anytown, USA', 'carowner1@example.com', '111-222-3333'),
+('Car Owner 2', '789 Pine St, Anytown, USA', 'carowner2@example.com', '444-555-6666');
+
+-- Sample data for Cars
+INSERT INTO Cars (owner_id, car_number, car_model, kilometer_rate) VALUES
+(1, 'ABC123', 'Toyota Camry', 0.50),
+(2, 'XYZ456', 'Honda Civic', 0.45);
+
+-- Sample data for Rides
+INSERT INTO Rides (owner_id, car_id, starting_point, ending_point, time_for_start, expected_time_for_reach_destination, price) VALUES
+(1, 1, 'Anytown', 'Downtown', '2024-04-02 10:00:00', '2024-04-02 12:00:00', 25.00),
+(2, 2, 'Downtown', 'Airport', '2024-04-03 08:00:00', '2024-04-03 10:00:00', 30.00);
+
+-- Sample data for Booking
+INSERT INTO Booking (ride_id, payment_id, payment, user_id) VALUES
+(1, 'PAY123', 25.00, 4),
+(2, 'PAY456', 30.00, 5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===============================================================================================
+
+-- Table: LoginTable
+CREATE TABLE LoginTable (
+    login_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    role ENUM('admin', 'car_owner', 'customer') NOT NULL
 );
 
-CREATE TABLE Cab (
-    cab_id INT AUTO_INCREMENT PRIMARY KEY,
-    driver_id INT UNIQUE NOT NULL,
-    driver_name VARCHAR(255) NOT NULL,
-    driver_number VARCHAR(255) UNIQUE NOT NULL,
-    car_brand VARCHAR(100) NOT NULL,
-    FOREIGN KEY (driver_id) REFERENCES Admin(driver_id),
-    FOREIGN KEY (driver_name) REFERENCES Admin(driver_name),
-    FOREIGN KEY (driver_number) REFERENCES Admin(driver_number),
-    FOREIGN KEY (car_brand) REFERENCES Admin(car_brand)
-);
-
-
-
-
--- Create Customer Signup table
-CREATE TABLE customer_signup (
+-- Table: Customer
+CREATE TABLE Customer (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255),
-    username VARCHAR(255),
-    email VARCHAR(255),
-    number VARCHAR(255),
-    gender VARCHAR(255),
-    address VARCHAR(255),
-    password VARCHAR(255),
-    re_password VARCHAR(255)
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    address VARCHAR(255) NOT NULL,
+    login_id INT UNIQUE,
+    phone_number VARCHAR(20) NOT NULL,
+    FOREIGN KEY (login_id) REFERENCES LoginTable(login_id)
 );
 
--- Create Customer Login table
-CREATE TABLE customer_login (
-    customer_id INT,
-    username VARCHAR(255),
-    password VARCHAR(255),
-    FOREIGN KEY (customer_id) REFERENCES customer_signup(customer_id)
-    
+-- Table: CarOwner
+CREATE TABLE CarOwner (
+    owner_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL,
+login_id INT UNIQUE,
+FOREIGN KEY (login_id) REFERENCES LoginTable(login_id)
+
 );
 
--- Create Forgot Password table
-CREATE TABLE forgot_password (
-    forgot_id INT AUTO_INCREMENT PRIMARY KEY,
-    changepassword VARCHAR(255)
+-- Table: Cars
+CREATE TABLE Cars (
+    car_id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT NOT NULL,
+    car_number VARCHAR(20) NOT NULL UNIQUE,
+    car_model VARCHAR(255) NOT NULL,
+    kilometer_rate DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES CarOwner(owner_id)
 );
 
--- Create Car Booking table
-CREATE TABLE Car_Booking (
+-- Table: Rides
+CREATE TABLE Rides (
+    ride_id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT NOT NULL,
+    car_id INT NOT NULL,
+    starting_point VARCHAR(255) NOT NULL,
+    ending_point VARCHAR(255) NOT NULL,
+    time_for_start DATETIME NOT NULL,
+    expected_time_for_reach_destination DATETIME NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES CarOwner(owner_id),
+    FOREIGN KEY (car_id) REFERENCES Cars(car_id)
+);
+
+-- Table: Booking
+CREATE TABLE Booking (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    cab_id INT,
-    Name VARCHAR(255) UNIQUE NOT NULL,
-    Date DATE NOT NULL,
-    mobile VARCHAR(255) UNIQUE NOT NULL,
-    car_booking BOOLEAN NOT NULL,
-    select_car BOOLEAN NOT NULL,
-    pickup_point VARCHAR(255) NOT NULL,
-    drop_point VARCHAR(255) NOT NULL,
-    price DOUBLE NOT NULL,
-    reaching_status DOUBLE,
-    FOREIGN KEY (customer_id) REFERENCES customer_signup(customer_id),
-    FOREIGN KEY (cab_id) REFERENCES Cab(cab_id)
+    ride_id INT NOT NULL,
+    payment_id VARCHAR(50) NOT NULL, -- Assuming payment_id is a string
+    payment DECIMAL(10, 2) NOT NULL,
+    customer_id INT NOT NULL,
+    FOREIGN KEY (ride_id) REFERENCES Rides(ride_id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
 );
-
-
-=======================================================================================================================================================
-
-
-
